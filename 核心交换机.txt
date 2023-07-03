@@ -1,0 +1,66 @@
+sys
+sys YX-HX
+vlan batch 10 20 30 40 77 100
+dhcp enable
+int g0/0/1
+ p l t
+ p t a v 10 40
+int g0/0/2
+ p l t
+ p t a v 20 40 100
+int g0/0/3
+ p l t
+ p t a v 30 40
+int g0/0/10
+ p l t
+ p t a v 40 100
+int g0/0/24
+ p l a
+ p d v 77   "port default vlan"命令是用于配置交换机端口的默认VLAN
+
+int vlan 10 
+ ip add 192.168.10.254 24
+ dhcp sel int
+ dhcp server dns-list 192.168.50.10
+int vlan 20 
+ ip add 192.168.20.254 24
+ dhcp sel int
+ dhcp server dns-list 192.168.50.10
+int vlan 30 
+ ip add 192.168.30.254 24
+ dhcp sel int
+ dhcp server dns-list 192.168.50.10
+int vlan 40 
+ ip add 192.168.40.254 24
+ dhcp sel int
+ dhcp server dns-list 192.168.50.10
+int vlan 100
+ ip add 192.168.100.254 24
+ dhcp sel int
+ dhcp server dns-list 192.168.50.10
+ dhcp server option 43 sub 2 ip 192.168.100.100
+int vlan 77
+ ip add 192.168.77.1 24
+
+
+ospf 1 
+ a 0
+ net 192.168.77.0 0.0.0.255
+ net 192.168.10.0 0.0.0.255
+ net 192.168.20.0 0.0.0.255
+ net 192.168.30.0 0.0.0.255
+ net 192.168.40.0 0.0.0.255
+ net 192.168.100.0 0.0.0.255
+ 
+
+acl 3000
+ rule deny ip source 192.168.40.0 0.0.0.255 des 192.168.10.0 0.0.0.255
+ rule deny ip source 192.168.40.0 0.0.0.255 des 192.168.20.0 0.0.0.255
+ rule deny ip source 192.168.40.0 0.0.0.255 des 192.168.30.0 0.0.0.255
+ rule permit ip
+int g0/0/1
+ traffic-filter inbound acl 3000
+int g0/0/2
+ traffic-filter inbound acl 3000
+int g0/0/3
+ traffic-filter inbound acl 3000

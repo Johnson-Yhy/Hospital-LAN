@@ -1,0 +1,53 @@
+sys
+sys YX-CK
+nat alg all enable
+acl 3001    //配置nat
+ rule deny ip source 192.168.0.0 0.0.255.255 destination 172.16.0.0 0.0.255.255
+ rule permit ip
+int g0/0/1
+ ip add 192.168.88.1 24
+int g0/0/2
+ ip add 200.100.1.1 30
+ nat outbound 3001   //配置nat 
+ nat server protocol tcp global current-interface www inside 192.168.50.20 www
+ nat server protocol tcp global current-interface ftp inside 192.168.50.30 ftp   //端口映射--此配置命令表示将公共网络上的TCP流量的特定端口（www）转发到私有网络中的192.168.50.20设备上的相应端口（也是www）。这将允许公共网络上的设备或用户通过访问公共网络上的特定端口，与私有网络中的192.168.50.20设备上的服务进行通信。
+ ipsec policy map1
+
+ip route-s 0.0.0.0 0 200.100.1.2    
+
+ ospf 1
+ default-route-advertise      //缺省路由下发到ospf里面
+  a 0
+  net 192.168.88.0 0.0.0.255
+
+
+acl 3000
+ rule permit ip source 192.168.0.0 0.0.255.255 destination 172.16.0.0 0.0.255.255
+
+ipsec proposal zb2fb     //zb2fb是一个IPsec提案的名称，而esp是一个用于提案中的转换，它指定了使用ESP来保护IPsec通信的数据包。请注意，具体的配置和参数可能根据不同的设备和实际部署环境而有所不同。
+transform esp
+
+ipsec policy map1 10 isakmp
+security acl 3000
+proposal zb2fb
+ike-peer fb  //1. `ipsec policy map1 10 isakmp`: 这个命令表示在IPsec策略`map1`中的第10条策略中使用ISAKMP（Internet Security Association and Key Management Protocol）协商安全参数。
+
+2. `security acl 3000`: 这个命令指定ACL（Access Control List）编号为3000，用于定义允许或拒绝IPsec流量的安全策略。
+
+3. `proposal zb2fb`: 这个命令指定使用名为`zb2fb`的IPsec提案。该提案定义了在IPsec通信中使用的安全参数，例如加密算法、认证算法等。
+
+4. `ike-peer fb`: 这个命令指定了一个名为`fb`的IKE（Internet Key Exchange）对等体。IKE是在IPsec建立安全通道时进行密钥协商和身份验证的协议。该命令可能包含了与对等体相关的配置参数，例如IP地址、预共享密钥等。
+
+综上所述，根据提供的配置命令，它们涉及到IPsec策略、ACL、IPsec提案以及IKE对等体的配置。具体的配置和参数可能会根据设备和实际部署环境而有所不同。
+
+ike proposal 5
+
+ike peer fb v1
+exchange-mode main
+pre-shared-key cipher huawei
+ike-proposal 5
+local-address 200.100.1.1
+remote-address 100.100.1.1
+
+
+ 

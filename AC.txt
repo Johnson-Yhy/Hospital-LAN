@@ -1,0 +1,23 @@
+sys
+sys AC
+vlan batch 40 100
+int vlan 100
+ ip add 192.168.100.100 24
+int g0/0/10
+ p l t
+ p t a v 40 100
+
+capwap source ip-address 192.168.100.100
+
+wlan 
+ ap auth-mode no-auth 
+  ssid-profile name 1
+  ssid yiyuan
+  security-profile name 1
+  security wpa-wpa2 psk pass-phrase 12345678 aes
+  vap-profile name 1
+  service-vlan vlan-id 40
+  ssid-profile 1
+  security-profile 1
+  ap-id 0 
+  	vap 1 wlan 1 radio all

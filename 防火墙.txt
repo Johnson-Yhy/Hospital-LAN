@@ -1,0 +1,39 @@
+interface GigabitEthernet1/0/0
+ undo shutdown
+ ip address 192.168.77.2 255.255.255.0
+#
+interface GigabitEthernet1/0/1
+ undo shutdown
+ ip address 192.168.50.254 255.255.255.0
+#
+interface GigabitEthernet1/0/2
+ undo shutdown
+ ip address 192.168.88.2 255.255.255.0
+
+security-policy
+ rule name T2U
+  source-zone trust
+  destination-zone untrust
+  action permit
+ rule name T2D
+  source-zone trust
+  destination-zone dmz
+  action permit
+ rule name L2A
+  source-zone local
+  action permit
+   rule name U2D
+  source-zone untrust
+  destination-zone dmz
+  action permit
+ rule name U2T
+  source-zone untrust
+  destination-zone trust
+  source-address 172.16.0.0 mask 255.255.0.0
+  action permit
+
+ospf 1
+ area 0.0.0.0
+  network 192.168.50.0 0.0.0.255
+  network 192.168.77.0 0.0.0.255
+  network 192.168.88.0 0.0.0.255

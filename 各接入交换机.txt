@@ -1,0 +1,42 @@
+sys
+sys MZ-JR
+vlan batch 10 40
+int g0/0/1
+ p l t 
+ p t a v 10 40
+int e0/0/1
+ p l a
+ p d v 40
+int e0/0/2
+ p l a 
+ p d v 10
+
+sys
+sys BF-JR
+vlan batch 20 40 100
+int g0/0/1
+ p l t 
+ p t a v 20 40 100
+int e0/0/1
+ p l a
+ p d v 20
+int e0/0/2
+ p l a 
+ p d v 40
+int e0/0/3
+ port link-type trunk
+ port trunk allow-pass vlan 40 100
+ p t p v 100
+
+sys
+sys XZ-JR
+vlan batch 30 40
+int g0/0/1
+ p l t 
+ p t a v 30 40
+int e0/0/1
+ p l a
+ p d v 30
+int e0/0/2
+ p l a 
+ p d v 40
